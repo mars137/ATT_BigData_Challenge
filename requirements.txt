@@ -1,0 +1,3 @@
+requests
+oauth2
+nose
