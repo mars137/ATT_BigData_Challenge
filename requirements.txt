@@ -1,3 +1,4 @@
 requests
 oauth2
 nose
+coverage

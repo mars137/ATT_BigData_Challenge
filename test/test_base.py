@@ -15,15 +15,12 @@ class TestBase(unittest.TestCase):
 
     def test_load_yelp_config(self):
         credentials = self.client.load_config("Yelp")
-        self.assertIsNotNone(credentials["key"])
-        self.assertIsNotNone(credentials["secret"])
-        self.assertIsNotNone(credentials["token"])
-        self.assertIsNotNone(credentials["token_secret"])
+        self.assertIsNotNone(credentials["access_token"])
 
     def test_load_no_config(self):
         empty_credentials = self.client.load_config()
         self.assertIsNone(empty_credentials)
 
     def test_authenticate(self):
-        self.client.load_config("Twitter")
-        self.assertIsNotNone(self.client.authenticate())
+        creds = self.client.load_config("Twitter")
+        self.assertIsNotNone(self.client.authenticate(creds))

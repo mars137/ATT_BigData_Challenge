@@ -1,16 +1,21 @@
 from __future__ import print_function
 import oauth2
 import ConfigParser
+import requests, json
 
 
 class Base(object):
 
-    def __init__(self):
+    def __init__(self):  #pragma: no cover
         self.twitter_base_url = "https://api.twitter.com/1.1/search/tweets.json"
-        self.yelp_base_url = ""
+        self.yelp_base_url = "https://api.yelp.com/v3/businesses/"
 
-    # Load the configuration
     def load_config(self, service=None):
+        """
+        Reads the configuration from ini file
+        @param service: service to which the API keys are required
+        @return: dict of credentials for auth
+        """
         Config = ConfigParser.ConfigParser()
         Config.read("config.ini")
         creds = {}
@@ -21,36 +26,50 @@ class Base(object):
             creds["token"] = Config.get("TwitterAuth", "token")
             creds["token_secret"] = Config.get("TwitterAuth", "token_secret")
         elif service == "Yelp":
-            creds["key"] = Config.get("YelpAuth", "key")
-            creds["secret"] = Config.get("YelpAuth", "secret")
-            creds["token"] = Config.get("YelpAuth", "token")
-            creds["token_secret"] = Config.get("YelpAuth", "token_secret")
+            creds["access_token"] = Config.get("YelpAuth_v3", "access_token")
+            # creds["key"] = Config.get("YelpAuth_v2", "key")
+            # creds["secret"] = Config.get("YelpAuth_v2", "secret")
+            # creds["token"] = Config.get("YelpAuth_v2", "token")
+            # creds["token_secret"] = Config.get("YelpAuth_v2", "token_secret")
 
         return creds if creds != {} else None
 
-    # Authenticate the client
     def authenticate(self, creds=None):
         """
-        @params: dict of api credentials
+        Authenticates the program using OAuth2
+        @param creds: dict of api credentials
         @return: authencated client for fetching requests
         """
         consumer = oauth2.Consumer(key=creds["key"], secret=creds["secret"])
         token = oauth2.Token(key=creds["token"], secret=creds["token_secret"])
         return oauth2.Client(consumer, token)
 
-    # Fetch the feed
     def fetch_twitter_feed(self, params=None):
         """
-        @params: dict of parameters
+        Fetches dict of tweets based on keyword
+        @param params: dict of parameters
         @return: list of tweets
         """
         creds = self.load_config("Twitter")
         consumer = self.authenticate(creds)
         request_url = self.twitter_base_url + "?q=" + params["q"]
+        print(consumer)
         resp, content = consumer.request(request_url,"GET")
-        return content["statuses"]
+        return json.loads(content)
 
-    def fetch_yelp_feed(self, params=None):
+    def fetch_yelp_feed(self, business_id=None):
         creds = self.load_config("Yelp")
-        consumer = self.authenticate(creds)
-        
+        access_token = 'Bearer '+creds["access_token"]
+        headers = {'Authorization': access_token}
+        request_url = self.yelp_base_url + business_id + '/reviews'
+        resp = requests.get(url=request_url, headers=headers)
+        return json.loads(resp.text)
+
+# Save to CSV
+def save_to_csv():
+    # Set headers of the file (columns)
+
+    # Set of fields for extraction
+
+    # Open file and write line by line
+    pass
