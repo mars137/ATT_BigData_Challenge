@@ -26,4 +26,4 @@ class TestBase(unittest.TestCase):
 
     def test_authenticate(self):
         self.client.load_config("Twitter")
-        print(self.client.authenticate())
+        self.assertIsNotNone(self.client.authenticate())
