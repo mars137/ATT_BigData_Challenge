@@ -53,7 +53,6 @@ class Base(object):
         creds = self.load_config("Twitter")
         consumer = self.authenticate(creds)
         request_url = self.twitter_base_url + "?q=" + params["q"]
-        print(consumer)
         resp, content = consumer.request(request_url,"GET")
         return json.loads(content)
 
