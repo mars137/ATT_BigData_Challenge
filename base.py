@@ -4,11 +4,8 @@ import ConfigParser
 import requests, json
 
 
-class Base(object):
 
-    def __init__(self):  #pragma: no cover
-        self.twitter_base_url = "https://api.twitter.com/1.1/search/tweets.json"
-        self.yelp_base_url = "https://api.yelp.com/v3/businesses/"
+class Base(object):
 
     def load_config(self, service=None):
         """
@@ -44,25 +41,28 @@ class Base(object):
         token = oauth2.Token(key=creds["token"], secret=creds["token_secret"])
         return oauth2.Client(consumer, token)
 
-    def fetch_twitter_feed(self, params=None):
-        """
-        Fetches dict of tweets based on keyword
-        @param params: dict of parameters
-        @return: list of tweets
-        """
-        creds = self.load_config("Twitter")
-        consumer = self.authenticate(creds)
-        request_url = self.twitter_base_url + "?q=" + params["q"]
-        resp, content = consumer.request(request_url,"GET")
-        return json.loads(content)
+def fetch_twitter_feed(consumer, max_id=""):
+    """
+    Fetches dict of tweets based on keyword
+    @param params: dict of parameters
+    @return: list of tweets
+    """
+    twitter_base_url = "https://api.twitter.com/1.1/search/tweets.json"
+    query_url = ' att%20OR%20attcares%20OR%20uverse%20lang%3Aen%20%40att%20OR%20%40attcares%20OR%20%40uverse&geocode=32.776664,-96.796988,15mi&result_type=recent&count=100'
+    request_url = twitter_base_url + "?q=" + query_url
+    if max_id != "":
+        request_url = twitter_base_url + "?q=" + query_url + "&max_id=" + max_id
+    resp, content = consumer.request(request_url,"GET")
+    return json.loads(content)
 
-    def fetch_yelp_feed(self, business_id=None):
-        creds = self.load_config("Yelp")
-        access_token = 'Bearer '+creds["access_token"]
-        headers = {'Authorization': access_token}
-        request_url = self.yelp_base_url + business_id + '/reviews'
-        resp = requests.get(url=request_url, headers=headers)
-        return json.loads(resp.text)
+def fetch_yelp_feed(self, business_id=None):
+    yelp_base_url = "https://api.yelp.com/v3/businesses/"
+    creds = self.load_config("Yelp")
+    access_token = 'Bearer '+creds["access_token"]
+    headers = {'Authorization': access_token}
+    request_url = self.yelp_base_url + business_id + '/reviews'
+    resp = requests.get(url=request_url, headers=headers)
+    return json.loads(resp.text)
 
 # Save to CSV
 def save_to_csv():
