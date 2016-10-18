@@ -63,12 +63,3 @@ def fetch_yelp_feed(self, business_id=None):
     request_url = self.yelp_base_url + business_id + '/reviews'
     resp = requests.get(url=request_url, headers=headers)
     return json.loads(resp.text)
-
-# Save to CSV
-def save_to_csv():
-    # Set headers of the file (columns)
-
-    # Set of fields for extraction
-
-    # Open file and write line by line
-    pass
