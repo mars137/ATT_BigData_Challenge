@@ -48,7 +48,7 @@ def fetch_twitter_feed(consumer, geocode, max_id=""):
     @return: list of tweets
     """
     twitter_base_url = "https://api.twitter.com/1.1/search/tweets.json"
-    query_url = ' att%20OR%20attcares%20OR%20uverse%20lang%3Aen%20%40att%20OR%20%40attcares%20OR%20%40uverse&geocode='+ geocode +',3mi&result_type=recent&count=100'
+    query_url = ' att%20OR%20attcares%20OR%20uverse%20lang%3Aen%20%40att%20OR%20%40attcares%20OR%20%40uverse&geocode='+ geocode +',5mi&result_type=recent'
     request_url = twitter_base_url + "?q=" + query_url
     if max_id != "":
         request_url = twitter_base_url + "?q=" + query_url + "&max_id=" + max_id
