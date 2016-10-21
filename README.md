@@ -1,5 +1,8 @@
 # Sentiment Analysis for correlating AT&T Retails Store performance – Empirical Study on Twitter, Yelp and Google reviews.
-### Aditya Purandare, Swapnil Phulse, Alok Satpathy, Mohammad Atif Tahir
+## Developers
+Aditya Purandare, Swapnil Phulse, Alok Satpathy, Mohammad Atif Tahir
+
+![Alt text](/DallasSentimentAnalysisGeoMap.png?raw=true "GeoMap")
 
 ## Introduction	
 The year 2016 expects certain insurgency around in what capacity can online networking information be expended in an enhanced way to relate with particular business needs. On the off chance that we think in 2015, we watched parcel of concentration on "Sophistication", "Customization" and "Innovation" inside the web-based social networking space, and it will probably observe the improvements around these territories in 2016 too, alongside the extra focus on "Collaboration", "Integration" and "Automation" to give superior personalized products, services and experiences across industries.
@@ -29,6 +32,10 @@ This exploratory analysis is based on a random sample of 3000 UMC (unit media co
 ### Location wise scoring – The following graph shows overall sentiment scores generated in the 10 AT&T stores in and around Dallas. The ones with bigger size are major stores to concentrate on for performance wrt customer satisfaction
 
 ## Word Cloud Creation
+
+![Alt text](/wordcloud.png?raw=true "WordCloud")
+
+
 From the word cloud created from recorded UMC, we found the following dominant sentiments/expressions. The ones with maximum concerns are as follows
 •	Issue
 •	Service
