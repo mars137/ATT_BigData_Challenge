@@ -61,7 +61,7 @@ def fetch_twitter_feed(consumer, geocode, max_id="", query=""):
     resp, content = consumer.request(request_url,"GET")
     tweet_feed = json.loads(content)
 
-    if tweet_feed["statuses"] == []:
+    if 'statuses' not in tweet_feed.keys():
         return None
 
     return tweet_feed["statuses"]
