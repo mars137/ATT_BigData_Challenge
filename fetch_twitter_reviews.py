@@ -55,12 +55,16 @@ def save_last_marker(max_id="", page=1, store_key=None):
     with open('tweet_marker.json', 'w') as f:
         json.dump(marker_data, f)
 
+def setup_client():
+    client = Base()
+    creds = client.load_config("Twitter")
+    return client.authenticate(creds)
+
 def main():
     try:
-        client = Base()
-        creds = client.load_config("Twitter")
-        consumer = client.authenticate(creds)
-        print(str(datetime.now()))
+        consumer = setup_client()
+
+        print("Start time of run %s " % str(datetime.now()))
 
         stores = {
         "Dallas1":["32.776664","-96.796988", "208 S Akard Street, Ste 110, Dallas, TX 75202"],
@@ -92,23 +96,12 @@ def main():
 
             # Loop through feed
 
-            while page <= 116:
-                twitter_resp = None
+            while page <= 1000:
                 loc = store_value[0] + ',' + store_value[1]
-                if max_id == "":
-                    twitter_resp = base.fetch_twitter_feed(consumer, loc)
-                else:
-                    twitter_resp = base.fetch_twitter_feed(consumer, loc, max_id)
+                raw_tweets = base.fetch_twitter_feed(consumer, loc, max_id)
 
-                if "statuses" in twitter_resp.keys():
-                    raw_tweets = twitter_resp["statuses"]
-                else:
+                if raw_tweets is None:
                     break
-
-                # if len(raw_tweets) == 1 or len(raw_tweets) == 0:
-                #     break
-
-                print(len(raw_tweets))
 
                 for tweet in raw_tweets:
                     T = Tweet(tweet)
