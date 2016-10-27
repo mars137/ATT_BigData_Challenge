@@ -88,13 +88,12 @@ def num_stores():
     return len(get_stores())
 
 def pause_processing(start_time, minutes=16):
-    time_lag = 60*minutes
-    end_time = datetime.now()
-    difference = end_time - start_time
-    delta = difference.seconds
-    resume_time = start_time + delta
-    print("Program sleeping till %s" % resume_time)
-    time.sleep(time_lag - delta)
+    time_gap = 60*minutes # 960
+    end_time = datetime.now() #end
+    difference = end_time - start_time #9
+    delta = difference.seconds # 9
+    print("Program sleeping for %s mins after %s" % (minutes, start_time))
+    time.sleep(time_gap - delta)
 
 def main():
     # try:
@@ -121,22 +120,18 @@ def main():
     for store in store_list[idx:]:
 
         # Loop through feed
-        while page <= 100:
+        while page <= 120:
             store_data = fetch_store_data(store)
             loc = store_data[0] + ',' + store_data[1]
 
-            # Rate limit the calls to Twitter
-            page += 1
-            api_calls += 1
-
             raw_tweets = base.fetch_twitter_feed(consumer, loc, max_id)
-            print(store, raw_tweets)
 
-            if raw_tweets is None:
+            if raw_tweets is None or raw_tweets == []:
+                print("Breaking from empty raw_tweets")
                 break
 
             if api_calls > 175:
-                pause_processing(start_time, minutes=1)
+                pause_processing(start_time, minutes=16)
                 api_calls = 1
                 start_time = datetime.now()
 
@@ -152,16 +147,20 @@ def main():
                 max_id = T.get_tweet_id()
 
             filename = folder+store+'_twitter_'+str(page)+'.csv'
+            write_headers_flag = False
             f = open(filename, 'w')
-            writer = csv.writer(f)
-
-            # Set headers of the file (columns)
-            writer.writerow(('Store', 'Latitude', 'Longitude',
-                             'Address', 'CreatedAt', 'Text',
-                             'Senti', 'Rating', 'Source'))
 
             # Open file and write line by line
             while not tweet_queue.empty():
+                if write_headers_flag == False:
+                    writer = csv.writer(f)
+
+                    # Set headers of the file (columns)
+                    writer.writerow(('Store', 'Latitude', 'Longitude',
+                                     'Address', 'CreatedAt', 'Text',
+                                     'Senti', 'Rating', 'Source'))
+                    write_headers_flag = True
+
                 current_tweet = tweet_queue.get()
                 writer.writerow((store, store_data[0],
                                 store_data[1], store_data[2],
@@ -176,10 +175,13 @@ def main():
 
             print("Page %s processed for store %s" % (page, store) )
 
-
+            # Rate limit the calls to Twitter
+            page += 1
+            api_calls += 1
 
         page = 1
         max_id = ""
+
 
     # except Exception as e:
     #     print(e)
