@@ -66,17 +66,24 @@ def setup_client():
 
 def get_stores():
     stores = {
-    "Dallas1":["32.776664","-96.796988", "208 S Akard Street, Ste 110, Dallas, TX 75202"],
-    "Dallas2":["32.8111091","-96.8092962","3329 Oak Lawn Avenue Dallas TX 75219"],
-    "Dallas3":["32.8293128","-96.8272358","5616 Lemmon Ave Dallas TX 75209"],
-    "Dallas4":["32.8685017","-96.7757012","8687 N Central Expressway Suite 2340"],
-    "Dallas5":["32.8342578","-96.7045404","1152 North Buckner Blvd"],
-    "Dallas6":["32.8740567","-96.771404","9100 N Central Expressway Suite 105"],
-    "Dallas7":["32.8957338","-96.8079243","5959 Royal Lane Dallas TX 7523"],
-    "Dallas8":["32.913273","-96.958064","7800 N. Macarthur Boulevard Suite 150"],
-    "Dallas9":["33.009892","-96.709061","701 N Central Expy Plano, TX 75075"],
-    "Dallas10":["32.953929","-96.821254","5100 Beltline Road Ste. 1032"],
-    "Dallas11":["32.934372","-96.820672","13710 Dallas Parkway Suite I"]
+    "Dallas1":["32.776664","-96.796988", "208 S Akard Street, Ste 110", "75202"],
+    "Dallas2":["32.8111091","-96.8092962","3329 Oak Lawn Avenue", "75219"],
+    "Dallas3":["32.8293128","-96.8272358","5616 Lemmon Ave","75209"],
+    "Dallas4":["32.8685017","-96.7757012","8687 N Central Expressway Suite 2340", "75225"],
+    "Dallas5":["32.8342578","-96.7045404","1152 North Buckner Blvd", "75218"],
+    "Dallas6":["32.8740567","-96.771404","9100 N Central Expressway Suite 105", "75231"],
+    "Dallas7":["32.8957338","-96.8079243","5959 Royal Lane", "75230"],
+    "Dallas8":["32.913273","-96.958064","7800 N. Macarthur Boulevard Suite 150", "75063"],
+    "Dallas9":["33.009892","-96.709061","701 N Central Expy", "75075"],
+    "Dallas10":["32.953929","-96.821254","5100 Beltline Road Ste. 1032", "75254"],
+    "Dallas11":["32.934372","-96.820672","13710 Dallas Parkway Suite I", "75240"],
+    "Dallas 12": ["32.836504", "-96.771185", "5618 E Mockingbird Lane", "75206"],
+    "Dallas 13": ["32.845283", "-96.787396", "6417 Hillcrest Ave","75205"],
+    "Dallas 14": ["32.853358", "-96.817694", "5567 W Lovers Ln","75209"],
+    "Dallas 15": ["32.853965", "-96.769903", "5521 Greenville Ave", "75206"],
+    "Dallas 16": ["32.865482", "-96.805688", "5960 W Northwest Hwy", "75225"],
+    "Dallas 17": ["32.739229", "-96.682466", "1530 S Buckner Blvd", "75217"],
+    "Dallas 18": ["32.980547", "-96.767442", "2160 N Coit Rd Ste 141", "75080"]
     }
     return stores
 
@@ -88,10 +95,10 @@ def num_stores():
     return len(get_stores())
 
 def pause_processing(start_time, minutes=16):
-    time_gap = 60*minutes # 960
-    end_time = datetime.now() #end
-    difference = end_time - start_time #9
-    delta = difference.seconds # 9
+    time_gap = 60*minutes
+    end_time = datetime.now()
+    difference = end_time - start_time
+    delta = difference.seconds
     print("Program sleeping for %s mins after %s" % (minutes, start_time))
     time.sleep(time_gap - delta)
 
@@ -157,16 +164,16 @@ def main():
 
                     # Set headers of the file (columns)
                     writer.writerow(('Store', 'Latitude', 'Longitude',
-                                     'Address', 'CreatedAt', 'Text',
+                                     'Address', 'Zip','CreatedAt', 'Text',
                                      'Senti', 'Rating', 'Source'))
                     write_headers_flag = True
 
                 current_tweet = tweet_queue.get()
                 writer.writerow((store, store_data[0],
                                 store_data[1], store_data[2],
-                                current_tweet[0], current_tweet[1],
-                                current_tweet[2], current_tweet[3],
-                                current_tweet[4]))
+                                store_data[3], current_tweet[0],
+                                current_tweet[1], current_tweet[2],
+                                current_tweet[3], current_tweet[4]))
 
             f.close()
 
