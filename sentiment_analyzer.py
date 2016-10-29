@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 import os, glob, re, itertools, HTMLParser
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
+import progressbar
 
 folder_input = 'dataset_part2'
 folder_output = 'twitter_output/'
@@ -92,7 +93,7 @@ def process_file(file_input): # pragma: no cover
         file_out = filepath.split("/")[1]
         new_file = folder_output + file_out + '_processed.csv'
         f_out = open(new_file, 'w')
-        print "File being processed %s" % (new_file)
+        # print "File being processed %s" % (new_file)
         reader = csv.reader(f_in)
         # Reads file line-by-line
         for row in reader:
@@ -130,7 +131,8 @@ def process_file(file_input): # pragma: no cover
 
 def main(): # pragma: no cover
     try:
-        for filename in glob.glob(os.path.join(folder_input, '*.csv')):
+        bar = progressbar.ProgressBar()
+        for filename in bar(glob.glob(os.path.join(folder_input, '*.csv'))):
             if not os.path.isdir(filename):
                 process_file(filename)
     except Exception as e:
