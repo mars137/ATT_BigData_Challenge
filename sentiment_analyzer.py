@@ -7,7 +7,8 @@ import os, glob, re, itertools, HTMLParser
 from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 
-path = 'dataset_part2'
+folder_input = 'dataset_part2'
+folder_output = 'twitter_output/'
 
 def get_sentiment(text):
     """
@@ -16,10 +17,34 @@ def get_sentiment(text):
     """
     blob = TextBlob(text, analyzer=NaiveBayesAnalyzer())
     sentiment = blob.sentiment.classification
-    score = blob.sentiment.p_pos - blob.sentiment.p_neg
+    score = '{0:.4f}'.format(blob.sentiment.p_pos - blob.sentiment.p_neg)
     return [sentiment, score]
 
+# def get_sentiment(text):
+#     """
+#     # @param text: blob of text
+#     # @return list of (sentiment, score) -> ('pos', '0.33')
+#     """
+#     blob = TextBlob(text)
+#     score = 0.0
+#     for sentence in blob.sentences:
+#         score += blob.sentiment.polarity
+#     sentiment = 'Positive'
+#     if score < 0:
+#         sentiment = 'Negative'
+#     elif score == 0:
+#         sentiment = 'Neutral'
+#
+#     return [sentiment, score]
+
+def get_storetype(store):
+    store_num = int(re.findall("[0-9]+", store)[0])
+    if store_num <= 11:
+        return "Corporate retailer"
+    return "Authorized retailer"
+
 def preprocess_text(tweet):
+    tweet = tweet.decode("utf8").encode('ascii', 'ignore')
     text = tweet.lower()
     html_parser = HTMLParser.HTMLParser()
     html_parsed_text = html_parser.unescape(text)
@@ -59,13 +84,13 @@ def find_service(tweet):
             return service_dict[word]
     return "general"
 
-
-
 def process_file(file_input): # pragma: no cover
     firstline = True
     try:
         f_in = open(file_input, 'rt')
-        new_file = f_in.name.split('.')[0] + '_processed.csv'
+        filepath = f_in.name.split('.')[0]
+        file_out = filepath.split("/")[1]
+        new_file = folder_output + file_out + '_processed.csv'
         f_out = open(new_file, 'w')
         print "File being processed %s" % (new_file)
         reader = csv.reader(f_in)
@@ -77,28 +102,35 @@ def process_file(file_input): # pragma: no cover
                 continue
             text = row[6]
 
+            # Add type of store
+            store_type = get_storetype(row[0])
+            row.insert(1, store_type)
+
             # Get sentiment for text blob
             sentiment, score = get_sentiment(text)
-            row[7] = sentiment
-            row.insert(8, score)
+            row[8] = sentiment
+            row.insert(9, score)
 
             # Find product from text
             product = find_product(text)
-            row.append(product)
+            row.insert(10, product)
 
             # Find service from text
             service = find_service(text)
+            row.insert(11, service)
 
             writer = csv.writer(f_out)
             writer.writerow((row))
 
+    except UnicodeDecodeError as e:
+        pass
+
     finally:
         f_in.close()
-        f_out.close()
 
 def main(): # pragma: no cover
     try:
-        for filename in glob.glob(os.path.join(path, '*.csv')):
+        for filename in glob.glob(os.path.join(folder_input, '*.csv')):
             if not os.path.isdir(filename):
                 process_file(filename)
     except Exception as e:
