@@ -3,10 +3,28 @@ import sys
 import requests
 import json
 import os, glob
+from textblob import TextBlob
+from textblob.sentiments import NaiveBayesAnalyzer
 
-path = 'data_input'
+path = 'dataset_part2'
 
-def sentiment_score(file_input):
+def get_sentiment(text):
+    """
+    # @param text: blob of text
+    # @return list of (sentiment, score) -> ('pos', '0.33')
+    """
+    blob = TextBlob(text, analyzer=NaiveBayesAnalyzer())
+    sentiment = blob.sentiment.classification
+    score = blob.sentiment.p_pos - blob.sentiment.p_neg
+    return [sentiment, score]
+
+def find_product(text):
+    pass
+
+def find_service(text):
+    pass
+
+def process_file(file_input):
     firstline = True
     try:
         f_in = open(file_input, 'rt')
@@ -15,28 +33,36 @@ def sentiment_score(file_input):
         print "File being processed %s" % (new_file)
         reader = csv.reader(f_in)
         for row in reader:
-            if firstline:    # skip first line
+            # skip first line
+            if firstline:
                 firstline = False
                 continue
-            text = row[5]
-            payload = {'txt': text}
-            resp = requests.post(url='http://sentiment.vivekn.com/api/text/', data=payload)
-            resp_json = json.loads(resp.text)
-            result = 0.0
-            sign = resp_json['result']['sentiment']
-            score = resp_json['result']['confidence']
-            row[6] = sign 
-            row.insert(7, score)
+            text = row[6]
+
+            # Get sentiment for text blob
+            sentiment, score = get_sentiment(text)
+            row[7] = sentiment
+            row.insert(8, score)
+
+            # Find product from text
+            product = find_product(text)
+            row.append(product)
+
+            # Find service from text
+            service = find_service(text)
+
             writer = csv.writer(f_out)
             writer.writerow((row))
+            
     finally:
         f_in.close()
+        f_out.close()
 
 def main():
     try:
         for filename in glob.glob(os.path.join(path, '*.csv')):
             if not os.path.isdir(filename):
-                sentiment_score(filename)
+                process_file(filename)
     except Exception as e:
         print(e)
 
