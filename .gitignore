@@ -149,3 +149,8 @@ jspm_packages
 
 # Output of 'npm pack'
 *.tgz
+
+dataset_part1/*.csv
+dataset_part2/*.csv
+twitter_output/*.csv
+twitter_vivekn/*.csv
