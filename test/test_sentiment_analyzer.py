@@ -7,9 +7,14 @@ class TestBase(unittest.TestCase):
     def setUp(self):
         self.test_tweet = "Who made you an @ATT fan? Share with #MadeMeAFanContest for a chance to win. Rules https://t.co/hU3I3wFn5V https://t.co/seJBJK"
 
-    def test_get_sentiment(self):
-        senti, score = sentiment_analyzer.get_sentiment(self.test_tweet)
+    def test_get_sentiment_textblob(self):
+        senti, score = sentiment_analyzer.get_sentiment_textblob(self.test_tweet)
         self.assertEquals(senti, 'neg')
+        self.assertIsNotNone(score)
+
+    def test_get_sentiment_vivekn(self):
+        senti, score = sentiment_analyzer.get_sentiment_vivekn(self.test_tweet)
+        self.assertEquals(senti, 'Positive')
         self.assertIsNotNone(score)
 
     def test_find_product_general(self):

@@ -8,10 +8,10 @@ from textblob import TextBlob
 from textblob.sentiments import NaiveBayesAnalyzer
 import progressbar
 
-folder_input = 'dataset_part2'
-folder_output = 'twitter_output/'
+folder_input = 'yelp_input'
+folder_output = 'yelp_output/'
 
-def get_sentiment(text):
+def get_sentiment_textblob(text):
     """
     # @param text: blob of text
     # @return list of (sentiment, score) -> ('pos', '0.33')
@@ -21,28 +21,23 @@ def get_sentiment(text):
     score = '{0:.4f}'.format(blob.sentiment.p_pos - blob.sentiment.p_neg)
     return [sentiment, score]
 
-# def get_sentiment(text):
-#     """
-#     # @param text: blob of text
-#     # @return list of (sentiment, score) -> ('pos', '0.33')
-#     """
-#     blob = TextBlob(text)
-#     score = 0.0
-#     for sentence in blob.sentences:
-#         score += blob.sentiment.polarity
-#     sentiment = 'Positive'
-#     if score < 0:
-#         sentiment = 'Negative'
-#     elif score == 0:
-#         sentiment = 'Neutral'
-#
-#     return [sentiment, score]
+def get_sentiment_vivekn(text):
+    """
+    # @param text: blob of text
+    # @return list of (sentiment, score) -> ('pos', '0.33')
+    """
+    payload ={"txt":text}
+    resp_json = requests.post("http://sentiment.vivekn.com/api/text/", data=payload)
+    sentiment_dict = json.loads(resp_json.text)
+    sentiment = sentiment_dict["result"]["sentiment"]
+    score = sentiment_dict["result"]["confidence"].decode('utf8').encode('ascii','ignore')
+    return [sentiment, score]
 
 def get_storetype(store):
     store_num = int(re.findall("[0-9]+", store)[0])
     if store_num <= 11:
-        return "Corporate retailer"
-    return "Authorized retailer"
+        return "Corporate"
+    return "Authorized"
 
 def preprocess_text(tweet):
     tweet = tweet.decode("utf8").encode('ascii', 'ignore')
@@ -102,28 +97,33 @@ def process_file(file_input): # pragma: no cover
                 firstline = False
                 continue
             text = row[6]
+            prod_input = row[10]
 
             # Add type of store
             store_type = get_storetype(row[0])
             row.insert(1, store_type)
 
             # Get sentiment for text blob
-            sentiment, score = get_sentiment(text)
+            sentiment, score = get_sentiment_vivekn(text)
             row[8] = sentiment
             row.insert(9, score)
 
             # Find product from text
-            product = find_product(text)
-            row.insert(10, product)
+            # product = find_product(text)
+            row.insert(10, prod_input)
 
             # Find service from text
             service = find_service(text)
             row.insert(11, service)
 
+            row.pop()
+
             writer = csv.writer(f_out)
             writer.writerow((row))
 
     except UnicodeDecodeError as e:
+        pass
+    except IndexError as e:
         pass
 
     finally:
