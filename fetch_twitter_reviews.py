@@ -77,13 +77,13 @@ def get_stores():
     "Dallas9":["33.009892","-96.709061","701 N Central Expy", "75075"],
     "Dallas10":["32.953929","-96.821254","5100 Beltline Road Ste. 1032", "75254"],
     "Dallas11":["32.934372","-96.820672","13710 Dallas Parkway Suite I", "75240"],
-    "Dallas 12": ["32.836504", "-96.771185", "5618 E Mockingbird Lane", "75206"],
-    "Dallas 13": ["32.845283", "-96.787396", "6417 Hillcrest Ave","75205"],
-    "Dallas 14": ["32.853358", "-96.817694", "5567 W Lovers Ln","75209"],
-    "Dallas 15": ["32.853965", "-96.769903", "5521 Greenville Ave", "75206"],
-    "Dallas 16": ["32.865482", "-96.805688", "5960 W Northwest Hwy", "75225"],
-    "Dallas 17": ["32.739229", "-96.682466", "1530 S Buckner Blvd", "75217"],
-    "Dallas 18": ["32.980547", "-96.767442", "2160 N Coit Rd Ste 141", "75080"]
+    "Dallas12": ["32.836504", "-96.771185", "5618 E Mockingbird Lane", "75206"],
+    "Dallas13": ["32.845283", "-96.787396", "6417 Hillcrest Ave","75205"],
+    "Dallas14": ["32.853358", "-96.817694", "5567 W Lovers Ln","75209"],
+    "Dallas15": ["32.853965", "-96.769903", "5521 Greenville Ave", "75206"],
+    "Dallas16": ["32.865482", "-96.805688", "5960 W Northwest Hwy", "75225"],
+    "Dallas17": ["32.739229", "-96.682466", "1530 S Buckner Blvd", "75217"],
+    "Dallas18": ["32.980547", "-96.767442", "2160 N Coit Rd Ste 141", "75080"]
     }
     return stores
 
@@ -103,96 +103,104 @@ def pause_processing(start_time, minutes=16):
     time.sleep(time_gap - delta)
 
 def main():
-    # try:
-    consumer = setup_client()
-    start_time = datetime.now()
-    print("Start time of run %s " % str(start_time))
+    try:
+        consumer = setup_client()
+        start_time = datetime.now()
+        print("Start time of run %s " % str(start_time))
 
-    store_list = []
-    for idx in range(num_stores()):
-        store_list.append("Dallas"+str(idx+1))
-
-    page = 1
-    api_calls = 1
-    tweet_queue = Queue()
-    last_result = get_last_marker()
-    idx = 0
-
-    max_id, page = last_result["max_id"], last_result["page"]
-    last_store = last_result["store_key"]
-    store_idx = int(re.findall("[0-9]+", last_store)[0])
-    if store_idx != 0:
-        idx = store_idx-1
-
-    for store in store_list[idx:]:
-
-        # Loop through feed
-        while page <= 120:
-            store_data = fetch_store_data(store)
-            loc = store_data[0] + ',' + store_data[1]
-
-            raw_tweets = base.fetch_twitter_feed(consumer, loc, max_id)
-
-            if raw_tweets is None or raw_tweets == []:
-                print("Breaking from empty raw_tweets")
-                break
-
-            if api_calls > 175:
-                pause_processing(start_time, minutes=16)
-                api_calls = 1
-                start_time = datetime.now()
-
-            for tweet in raw_tweets:
-                T = Tweet(tweet)
-                processed_tweet = T.parse_tweet()
-
-                # Skip the last processed tweet
-                if max_id == T.get_tweet_id():
-                    continue
-
-                tweet_queue.put(processed_tweet)
-                max_id = T.get_tweet_id()
-
-            filename = folder+store+'_twitter_'+str(page)+'.csv'
-            write_headers_flag = False
-            f = open(filename, 'w')
-
-            # Open file and write line by line
-            while not tweet_queue.empty():
-                if write_headers_flag == False:
-                    writer = csv.writer(f)
-
-                    # Set headers of the file (columns)
-                    writer.writerow(('Store', 'Latitude', 'Longitude',
-                                     'Address', 'Zip','CreatedAt', 'Text',
-                                     'Senti', 'Rating', 'Source'))
-                    write_headers_flag = True
-
-                current_tweet = tweet_queue.get()
-                writer.writerow((store, store_data[0],
-                                store_data[1], store_data[2],
-                                store_data[3], current_tweet[0],
-                                current_tweet[1], current_tweet[2],
-                                current_tweet[3], current_tweet[4]))
-
-            f.close()
-
-            # Save marker to file
-            save_last_marker(max_id, page, store)
-
-            print("Page %s processed for store %s" % (page, store) )
-
-            # Rate limit the calls to Twitter
-            page += 1
-            api_calls += 1
+        store_list = []
+        for idx in range(num_stores()):
+            store_list.append("Dallas"+str(idx+1))
 
         page = 1
-        max_id = ""
+        api_calls = 1
+        tweet_queue = Queue()
+        last_result = get_last_marker()
+        idx = 0
+
+        max_id, page = last_result["max_id"], last_result["page"]
+        last_store = last_result["store_key"]
+        store_idx = int(re.findall("[0-9]+", last_store)[0])
+        if store_idx != 0:
+            idx = store_idx-1
+
+        queries = [
+        'att%20OR%20attcares%20OR%20uverse%20OR%20attfiber%20OR%20directv%20OR%20directvservice',
+        '%40att%20OR%20%40attcares%20OR%20%40uverse%20OR%20%40directv%20OR%20%40directvservice',
+        '%23att%20OR%20%23attcares%20OR%20%23uverse%20OR%20%23directv%20OR%20%23attfiber'
+        ]
+
+        for store in store_list[idx:]:
+
+            # Loop through feed
+            while page <= 50:
+                store_data = fetch_store_data(store)
+                loc = store_data[0] + ',' + store_data[1]
+                query = queries[2]+'&geocode='+loc+',7mi&count=100'
+                raw_tweets = base.fetch_twitter_feed(consumer, loc, max_id, query)
+
+                if raw_tweets is None or raw_tweets == []:
+                    print("Breaking from empty raw_tweets")
+                    break
 
 
-    # except Exception as e:
-    #     print(e)
-    #     traceback.print_exc()
+                if api_calls > 175:
+                    pause_processing(start_time, minutes=16)
+                    api_calls = 1
+                    start_time = datetime.now()
+
+                for tweet in raw_tweets:
+                    T = Tweet(tweet)
+                    processed_tweet = T.parse_tweet()
+
+                    # Skip the last processed tweet
+                    if max_id == T.get_tweet_id():
+                        continue
+
+                    tweet_queue.put(processed_tweet)
+                    max_id = T.get_tweet_id()
+
+                filename = folder+store+'_twitter_'+str(page)+'.csv'
+                write_headers_flag = True
+                f = open(filename, 'a')
+                writer = csv.writer(f)
+
+
+                # Open file and write line by line
+                while not tweet_queue.empty():
+                    if write_headers_flag == False:
+
+                        # Set headers of the file (columns)
+                        writer.writerow(('Store', 'Latitude', 'Longitude',
+                                         'Address', 'Zip','CreatedAt', 'Text',
+                                         'Senti', 'Rating', 'Source'))
+                        write_headers_flag = True
+
+                    current_tweet = tweet_queue.get()
+                    writer.writerow((store, store_data[0],
+                                    store_data[1], store_data[2],
+                                    store_data[3], current_tweet[0],
+                                    current_tweet[1], current_tweet[2],
+                                    current_tweet[3], current_tweet[4]))
+
+                f.close()
+
+                # Save marker to file
+                save_last_marker(max_id, page, store)
+
+                print("Page %s with reviews %s processed for store %s" % (page, len(raw_tweets), store))
+
+                # Rate limit the calls to Twitter
+                page += 1
+                api_calls += 1
+
+            page = 1
+            max_id = ""
+
+
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
 
 
 if __name__ == '__main__':

@@ -48,7 +48,8 @@ def fetch_twitter_feed(consumer, geocode, max_id="", query=""):
     @return: list of tweets
     """
     twitter_base_url = "https://api.twitter.com/1.1/search/tweets.json"
-    query_url = 'att%20OR%20attcares%20OR%20uverse%20OR%20at%26t%20OR%20digital%20OR%20life%20OR%20attfiber%20OR%20directv%20OR%20directvservice%20%23att%20OR%20%23attcares%20OR%20%23uverse%20OR%20%23directv%20OR%20%23attfiber%20lang%3Aen%20%40att%20OR%20%40attcares%20OR%20%40uverse%20OR%20%40directv%20OR%20%40directvservice&geocode='+ geocode +',7mi&count=100'
+    # query_url = 'att%20OR%20attcares%20OR%20uverse%20OR%20at%26t%20OR%20digital%20OR%20life%20OR%20attfiber%20OR%20directv%20OR%20directvservice%20%23att%20OR%20%23attcares%20OR%20%23uverse%20OR%20%23directv%20OR%20%23attfiber%20lang%3Aen%20%40att%20OR%20%40attcares%20OR%20%40uverse%20OR%20%40directv%20OR%20%40directvservice&geocode='+ geocode +',10mi&count=100'
+    query_url ='att%20OR%20attcares%20OR%20uverse%20OR%20attfiber%20OR%20directv%20OR%20directvservice%20OR%40att%20OR%20%40attcares%20OR%20%40uverse%20OR%20%40directv%20OR%20%40directvservice&geocode='+geocode+',10mi&count=100'
 
     if query != "":
         query_url = query
@@ -64,7 +65,7 @@ def fetch_twitter_feed(consumer, geocode, max_id="", query=""):
     if 'statuses' not in tweet_feed.keys():
         return None
 
-    return tweet_feed["statuses"]
+    return tweet_feed["statuses"] or None
 
 def fetch_yelp_feed(business_id=None):
     client = Base()
