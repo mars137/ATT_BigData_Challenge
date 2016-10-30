@@ -9,8 +9,8 @@ from textblob.sentiments import NaiveBayesAnalyzer
 import progressbar
 from datetime import datetime
 
-folder_input = 'yelp_input'
-folder_output = 'yelp_output/'
+folder_input = 'google_input'
+folder_output = 'google_output/'
 
 def get_sentiment_textblob(text):
     """
@@ -41,7 +41,7 @@ def get_storetype(store):
     return "Authorized"
 
 def preprocess_text(tweet):
-    # tweet = tweet.decode("utf8").encode('ascii', 'ignore')
+    tweet = tweet.decode("utf8").encode('ascii', 'ignore')
     text = tweet.lower()
     html_parser = HTMLParser.HTMLParser()
     html_parsed_text = html_parser.unescape(text)
@@ -82,15 +82,11 @@ def find_service(tweet):
     return "general"
 
 def parse_date(date_str):
-    date_splitbySpace = date_str.split(" ")
-    if len(date_splitbySpace) > 2:
-        d_str, t_str, am = date_splitbySpace
-    else:
-        d_str, t_str = date_splitbySpace
-    mon,dd,yyyy = [int(d) for d in d_str.split("/")]
+    d_str, t_str = date_str.split(" ")
+    yyyy,mon,dd = [int(d) for d in d_str.split("/")]
+    time_temp = [int(t) for t in t_str.split(':')]
     if yyyy < 2000:
         yyyy += 2000
-    time_temp = [int(t) for t in t_str.split(':')]
 
     if len(time_temp) > 2:
         hh,mm,ss = time_temp
@@ -109,57 +105,53 @@ def parse_date(date_str):
 def process_file(file_input): # pragma: no cover
     firstline = True
     try:
-        f_in = open(file_input, 'rt')
-        filepath = f_in.name.split('.')[0]
-        file_out = filepath.split("/")[1]
-        new_file = folder_output + file_out + '_processed.csv'
-        f_out = open(new_file, 'w')
-        # print "File being processed %s" % (new_file)
-        reader = csv.reader(f_in, delimiter= ',')
-        # Reads file line-by-line
-        for row in reader:
+        with open(file_input, 'rU') as f_in:
 
-            # skip first line
-            if firstline:
-                firstline = False
-                continue
-            text = row[6]
-            prod_input = row[9]
+            filepath = f_in.name.split('.')[0]
+            file_out = filepath.split("/")[1]
+            new_file = folder_output + file_out + '_processed.csv'
+            f_out = open(new_file, 'w')
+            # print "File being processed %s" % (new_file)
+            reader = csv.reader(f_in)
+            # Reads file line-by-line
+            for row in csv.reader(f_in.read().splitlines()):
 
+                # skip first line
+                if firstline:
+                    firstline = False
+                    continue
+                text = row[6]
 
+                # Format store name
+                store = row[0].split(" ")
+                store_name  = ''.join(str(s) for s in store)
+                row[0] = store_name
 
-            # Format store name
-            store = row[0].split(" ")
-            store_name  = ''.join(str(s) for s in store)
-            row[0] = store_name
+                # Add type of store
+                store_type = get_storetype(row[0])
+                row.insert(1, store_type)
 
-            # Add type of store
-            store_type = get_storetype(row[0])
-            row.insert(1, store_type)
+                # Parse datetime to standard format
+                row[6] = parse_date(row[6])
 
+                # Get sentiment for text blob
+                sentiment, score = get_sentiment_vivekn(text)
+                row.insert(8, sentiment)
+                row.insert(9, score)
 
-            # Parse datetime to standard format
-            row[6] = parse_date(row[6])
+                # Find product from text
+                product = find_product(text)
+                row[10] = product
 
-            # Get sentiment for text blob
-            sentiment, score = get_sentiment_vivekn(text)
-            row.insert(8,sentiment)
-            row.insert(9, score)
+                # Find service from text
+                service = find_service(text)
+                row.insert(11, service)
 
-
-            # Find product from text
-            # product = find_product(text)
-            row.insert(10, prod_input)
-
-            # Find service from text
-            service = find_service(text)
-            row.insert(11, service)
-
-            row.pop()
+                row[13] = 'Google'
 
 
-            writer = csv.writer(f_out)
-            writer.writerow((row))
+                writer = csv.writer(f_out)
+                writer.writerow((row))
 
     except UnicodeDecodeError as e:
         pass
@@ -176,7 +168,7 @@ def main(): # pragma: no cover
         if not os.path.isdir(filename):
             process_file(filename)
     # except Exception as e:
-        # print(e)
+    #     print(e)
 
 if __name__ == '__main__': # pragma: no cover
     main()
