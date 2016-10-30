@@ -87,7 +87,7 @@ def parse_date(date_str):
         d_str, t_str, am = date_splitbySpace
     else:
         d_str, t_str = date_splitbySpace
-    mon,dd,yyyy = [int(d) for d in d_str.split("/")]
+    yyyy,mon,dd = [int(d) for d in d_str.split("/")]
     if yyyy < 2000:
         yyyy += 2000
     time_temp = [int(t) for t in t_str.split(':')]
@@ -124,9 +124,6 @@ def process_file(file_input): # pragma: no cover
                 firstline = False
                 continue
             text = row[6]
-            prod_input = row[9]
-
-
 
             # Format store name
             store = row[0].split(" ")
@@ -137,26 +134,21 @@ def process_file(file_input): # pragma: no cover
             store_type = get_storetype(row[0])
             row.insert(1, store_type)
 
-
             # Parse datetime to standard format
             row[6] = parse_date(row[6])
 
             # Get sentiment for text blob
             sentiment, score = get_sentiment_vivekn(text)
-            row.insert(8,sentiment)
+            row[8] = sentiment
             row.insert(9, score)
 
-
             # Find product from text
-            # product = find_product(text)
-            row.insert(10, prod_input)
+            product = find_product(text)
+            row.insert(10, product)
 
             # Find service from text
             service = find_service(text)
             row.insert(11, service)
-
-            row.pop()
-
 
             writer = csv.writer(f_out)
             writer.writerow((row))
@@ -170,13 +162,13 @@ def process_file(file_input): # pragma: no cover
         f_in.close()
 
 def main(): # pragma: no cover
-    # try:
-    bar = progressbar.ProgressBar()
-    for filename in bar(glob.glob(os.path.join(folder_input, '*.csv'))):
-        if not os.path.isdir(filename):
-            process_file(filename)
-    # except Exception as e:
-        # print(e)
+    try:
+        bar = progressbar.ProgressBar()
+        for filename in bar(glob.glob(os.path.join(folder_input, '*.csv'))):
+            if not os.path.isdir(filename):
+                process_file(filename)
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__': # pragma: no cover
     main()
