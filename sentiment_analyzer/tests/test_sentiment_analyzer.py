@@ -40,3 +40,13 @@ class TestBase(unittest.TestCase):
         self.assertIsNotNone(cleaned_text)
         self.assertTrue("att" in cleaned_text)
         self.assertTrue("mademeafancontest" in cleaned_text)
+
+    def test_get_store_type_corporate(self):
+        store = sentiment_analyzer.get_storetype('Dallas10')
+        self.assertIsNotNone(store)
+        self.assertEquals(store, "Corporate")
+
+    def test_get_store_type_authorized(self):
+        store = sentiment_analyzer.get_storetype('Dallas16')
+        self.assertIsNotNone(store)
+        self.assertEquals(store, "Authorized")

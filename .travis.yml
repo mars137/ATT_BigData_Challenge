@@ -10,6 +10,6 @@ install:
   - sudo mv nltk_data /usr/share/nltk_data
 # command to run tests
 script:
-  - nosetests -sv test
+  - sudo python setup.py nosetests
 notifications:
   email: false

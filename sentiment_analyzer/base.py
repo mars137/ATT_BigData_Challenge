@@ -4,7 +4,6 @@ import ConfigParser
 import requests, json
 
 
-
 class Base(object):
 
     def load_config(self, service=None):
@@ -14,7 +13,7 @@ class Base(object):
         @return: dict of credentials for auth
         """
         Config = ConfigParser.ConfigParser()
-        Config.read("config.ini")
+        Config.read("sentiment_analyzer/config.ini")
         creds = {}
 
         if service == "Twitter":
