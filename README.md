@@ -1,7 +1,5 @@
 # Sentiment Analysis for correlating AT&T Retails Store performance – Empirical Study on Twitter, Yelp and Google reviews.
 
-[![Build Status](https://travis-ci.com/mars137/Data_Challenge.svg?token=GHivzknmxHfYWrAfnY58&branch=master)](https://travis-ci.com/mars137/Data_Challenge)
-
 ## Developers
 Aditya Purandare, Swapnil Phulse, Alok Satpathy, Mohammad Atif Tahir
 
