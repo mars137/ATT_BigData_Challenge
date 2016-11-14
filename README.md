@@ -4,12 +4,12 @@ Sentiment Analysis for correlating AT&T Retails Store performance – Empirical 
 ## Developers
 Aditya Purandare, Swapnil Phulse, Alok Satpathy, Mohammad Atif Tahir
 
-<img src="https://github.com/mars137/Data_Challenge/raw/master/developers-bigdata.jpg" width="640" height="360">
+<img src="https://github.com/mars137/Data_Challenge/raw/master/docs/developers-bigdata.jpg" width="640" height="360">
 
 ## Introduction
 The year 2016 expects certain insurgency around in what capacity can online networking information be expended in an enhanced way to relate with particular business needs. On the off chance that we think in 2015, we watched parcel of concentration on "Sophistication", "Customization" and "Innovation" inside the web-based social networking space, and it will probably observe the improvements around these territories in 2016 too, alongside the extra focus on "Collaboration", "Integration" and "Automation" to give superior personalized products, services and experiences across industries.
 
-![Alt text](/docs/DallasSentimentAnalysisGeoMap.png?raw=true "GeoMap")
+<img src="https://github.com/mars137/Data_Challenge/raw/master/docs/Marketing%20Dashboard.JPG" width="700" height="400">
 
 It is imperative that renowned corporations like AT&T jump the social media analytics bandwagon. This competition aimed at harnessing Big data to unravel information about customer sentiments as captured in either structured/unstructured way. This report intends to describe our basic understanding through literature-review, our overall solution design and initial insights obtained from exploratory data analysis.
 
@@ -22,24 +22,28 @@ The main theoretical contributions of our research include the design and develo
 In a worldwide commercial center, where consistent development and client contact is fundamental, AT&T must explore the scene of customary call focuses, retail location collaborations, and now, online presence. As mentioned in case, 500 million tweets are posted in the Twitter universe daily. These tweets go from associations between companions to purchaser protestations. True to its mission " connect people with their world, everywhere they live, work and play … and do it better than anyone else ", AT&T has decided to use data over the plethora of online websites.
 
 ## Overall architecture and solution design
+<img src="https://github.com/mars137/Data_Challenge/raw/master/docs/Architecture%20Big%20Data%20Challenge.png" width="650" height="240">
+
 ### Data collection
 By using API collectors intended to gather data from varied sources, in its native form, we have gathered raw tweets, yelp and google reviews. It helped us capture general sentiments associated with this excerpts that capture customer response.
 Big data Sentiment analysis
 This, we believe to be the most crucial stage, lying at the heart of the application to derive sentiments through the use of API and Hive processing. Capturing sentiment scores from reviews and rendering a relational database-like appearance through HQL, it should be able to provide answers to most social media presence related issues.
+
 ### Data warehouse
 One of the biggest challenges in this project has been data consolidation. We figured a better way enabling dynamicity and operational flexibility (treating this to be a real-world project, which it is) would be through a data-warehouse. A dedicated ETL layer, built with a future vision would be an added advantage over an ad-hoc database solution.
-Data exploration and preliminary insights
-This exploratory analysis is based on a random sample of 3000 UMC (unit media content – our case observation
+
+<img src="https://github.com/mars137/Data_Challenge/raw/master/docs/ERDiagram.JPG" width="600" height="400">
+
+
 ### Sentiment distribution
- As can be seen from figure below, we found that sentiment ratings were mostly polarized. If you look at the figure below showing an absolute frequency histogram for sentiment ratings, most of those concentrated towards the tails/ends of the graph with a relatively fewer neutrals. Please note that cumulative counts for positive or negatively rated sentiments in a range of -100 to 100. for analysis).
+As can be seen from figure below, we found that sentiment ratings were mostly polarized. If you look at the figure below showing an absolute frequency histogram for sentiment ratings, most of those concentrated towards the tails/ends of the graph with a relatively fewer neutrals. Please note that cumulative counts for positive or negatively rated sentiments in a range of -100 to 100. for analysis).
 
 
 ### Location wise scoring – The following graph shows overall sentiment scores generated in the 10 AT&T stores in and around Dallas. The ones with bigger size are major stores to concentrate on for performance wrt customer satisfaction
 
 ## Word Cloud Creation
 
-![Alt text](/docs/wordcloud.png?raw=true "WordCloud")
-
+<img src="https://github.com/mars137/Data_Challenge/raw/master/docs/wordcloud.png" width="600" height="400">
 
 From the word cloud created from recorded UMC, we found the following dominant sentiments/expressions. The ones with maximum concerns are as follows
 •	Issue
@@ -49,13 +53,5 @@ From the word cloud created from recorded UMC, we found the following dominant s
 •	Since
 These are more often than not indicators of customer dis-satisfaction and should be vigilantly monitored in real time.
 
-## Additional thoughts
-If we were given more time, the correlation of following items would be our focus of interest
-### Aging/Depreciation factor
-We found that a particular product gets lesser reviews as it grows old in the market and is impacted by other competitive products. A predictor input that can capture this depreciation of interest would be really helpful.
-### Capturing triggers
-Within events like protests, strikes, elections, a particular marketing campaign or special occasions (Christmas, Thanksgiving, NBA season finals etc.) tend to have an impact on the number of tweets. The gradient of its influence on our outcome would be interesting to explore
-### Location-specific preference
-Certain tech-hubs/ sophisticated locations tend to get much more network traffic of value in this case. It is customary to factor in location favorite indexes where AT&T team would like to focus their efforts on.
 ### Deep intuit
 There is plethora of techniques developed that can help us dig deeper. Continuous investigation of the services on offer, and reviews/remarks posted about it, could help the association refine the message and how it's conveyed to enhance the reaction rate and the online input. Investigation of that sort sustains into a more intricate layer: taking a gander at how diverse members in online networking groups communicate with each other. Doing as such can distinguish compelling individuals inside a group - for instance, Twitters mentioning blog links – that generate content on another website and how one influences conclusions of users on that website. Such individuals could then be singled out for nearer observation of specific patterns that AT&T should monitor, either to fortify positive remarks or to answer negative ones.
