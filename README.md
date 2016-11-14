@@ -1,12 +1,16 @@
-# Sentiment Analysis for correlating AT&T Retails Store performance – Empirical Study on Twitter, Yelp and Google reviews.
+# Sentiment Analyzer for AT&T social feeds [Runners-Up AT&T Big Data Challenge 2016]
+Sentiment Analysis for correlating AT&T Retails Store performance – Empirical Study on Twitter, Yelp and Google reviews.
 
 ## Developers
 Aditya Purandare, Swapnil Phulse, Alok Satpathy, Mohammad Atif Tahir
 
-![Alt text](/docs/DallasSentimentAnalysisGeoMap.png?raw=true "GeoMap")
+<img src="https://github.com/mars137/Data_Challenge/raw/master/developers-bigdata.jpg" width="640" height="360">
 
 ## Introduction
 The year 2016 expects certain insurgency around in what capacity can online networking information be expended in an enhanced way to relate with particular business needs. On the off chance that we think in 2015, we watched parcel of concentration on "Sophistication", "Customization" and "Innovation" inside the web-based social networking space, and it will probably observe the improvements around these territories in 2016 too, alongside the extra focus on "Collaboration", "Integration" and "Automation" to give superior personalized products, services and experiences across industries.
+
+![Alt text](/docs/DallasSentimentAnalysisGeoMap.png?raw=true "GeoMap")
+
 It is imperative that renowned corporations like AT&T jump the social media analytics bandwagon. This competition aimed at harnessing Big data to unravel information about customer sentiments as captured in either structured/unstructured way. This report intends to describe our basic understanding through literature-review, our overall solution design and initial insights obtained from exploratory data analysis.
 
 ## Literature Review
